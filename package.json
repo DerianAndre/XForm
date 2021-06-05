@@ -1,0 +1,35 @@
+{
+  "name": "xform",
+  "version": "1.0.0",
+  "description": "A simple, lightweight and automated way to manage forms with XHR.",
+  "main": "src/XForm.js",
+  "author": "DerianAndre <hola@derianandre.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DerianAndre/XForm.git"
+  },
+  "keywords": [
+    "form",
+    "html",
+    "html5"
+  ],
+  "size-limit": [
+    {
+      "limit": "5 kB",
+      "path": "dist/XForm.min.js"
+    }
+  ],
+  "scripts": {
+    "build": "gulp",
+    "size": "size-limit"
+  },
+  "devDependencies": {
+    "@size-limit/file": "^4.10.2",
+    "gulp": "^4.0.2",
+    "gulp-header": "^2.0.9",
+    "gulp-rename": "^2.0.0",
+    "gulp-uglify": "^3.0.2",
+    "size-limit": "^4.10.2"
+  }
+}

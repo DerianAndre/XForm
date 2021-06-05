@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="DerianAndre">
+    <title>XForm</title>
+    <!-- XForm -->
+    <script src="../dist/xform.js"></script>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+    <style>body { background: rgb(234, 238, 243); }</style>
+  </head>
+<body>
+  <div class="container py-5 d-flex align-items-center flex-column">
+    <div class="card text-center border-0 shadow mb-5" style="border-radius: 0.75rem;">
+      <div class="card-body p-5">
+        <h1 class="card-title">XForm</h1>
+        <p class="lead mb-4">A simple, lightweight and automated way to manage forms with XHR.</p>
+        <form data-xform>
+          <div class="row row-cols-1 row-cols-md-2 gx-3 text-start">
+            <div class="col">
+              <!-- Text -->
+              <div class="form-floating mb-3">
+                <input id="name" name="text" placeholder="Text" class="form-control" type="text" required data-xform-item>
+                <label for="text">Text</label>
+              </div>
+              <!-- E-mail -->
+              <div class="form-floating mb-3">
+                <input id="email" name="email" placeholder="E-mail" class="form-control" type="text" required data-xform-item>
+                <label for="email">E-mail</label>
+              </div>
+              <!-- Password -->
+              <div class="form-floating mb-3">
+                <input id="password" name="password" placeholder="Password" class="form-control" type="password" required data-xform-item>
+                <label for="password">Password</label>
+              </div>
+              <!-- Date -->
+              <div class="form-floating mb-3">
+                <input id="date" name="date" placeholder="Date" class="form-control" type="date" data-xform-item>
+                <label for="date">Date</label>
+              </div>
+              <!-- Textarea -->
+              <div class="form-floating mb-3">
+                <textarea id="message" name="message" placeholder="Message" class="form-control space-form" rows="3" data-xform-item></textarea>
+                <label for="message">Message</label>
+              </div>
+              <!-- Range -->
+              <div class="form-floating mb-3">
+                <div class="form-control">
+                  <input id="range"  name="range" type="range" class="form-range" min="0" max="5"data-xform-item>
+                </div>
+                <label for="range">Range</label>
+              </div>
+              <!-- Files -->
+              <div class="form-floating mb-3">
+                <div class="form-control h-auto">
+                  <input id="files" name="files" class="form-control" type="file" multiple data-xform-item>
+                </div>
+                <label for="files">Files</label>
+              </div>
+            </div>
+            <div class="col">
+              <!-- Select -->
+              <div class="form-floating mb-3">
+                <select id="select" name="select" class="form-select" aria-label="Floating label select example" data-xform-item>
+                  <option value="1">One</option>
+                  <option value="2">Two</option>
+                  <option value="3">Three</option>
+                </select>
+                <label for="Select">Select</label>
+              </div>
+              <!-- Datalist -->
+              <div class="form-floating mb-3">
+                <input name="datalist" class="form-control" list="datalistOptions" id="datalist" placeholder="Type to search..." data-xform-item>
+                <label for="datalist" class="form-label">Datalist</label>
+                <datalist id="datalistOptions">
+                  <option value="San Francisco">
+                  <option value="New York">
+                  <option value="Seattle">
+                  <option value="Los Angeles">
+                  <option value="Chicago">
+                </datalist>
+              </div>
+              <!-- Color -->
+              <div class="form-floating mb-3">
+                <input name="color" type="color" class="form-control form-control-color mw-100" id="exampleColorInput" value="#563d7c" title="Choose your color" data-xform-item>
+                <label for="exampleColorInput" class="form-label">Color picker</label>
+              </div>
+              <!-- Checks and Radios -->
+              <div class="form-floating">
+                <div class="form-control h-auto">
+                  <!-- Checkbox -->
+                  <b>Checkbox</b>
+                  <div class="form-check mb-2">
+                    <input class="form-check-input" id="checkbox" name="checkbox" type="checkbox" value="true" checked data-xform-item>
+                    <label class="form-check-label" for="checkbox">
+                      Checked checkbox
+                    </label>
+                  </div>
+                  <!-- Switch -->
+                  <b>Switch</b>
+                  <div class="form-check mb-2 form-switch">
+                    <input class="form-check-input" id="switch" name="switch" type="checkbox" value="true-switch" data-xform-item>
+                    <label class="form-check-label" for="switch">Default switch checkbox input</label>
+                  </div>
+                  <!-- Radio -->
+                  <b>Radio</b>
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="radios" id="radios1" value="radio 1" checked data-xform-item>
+                    <label class="form-check-label" for="radios1">
+                      Default radio
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="radios" id="radios2" value="radio 2" data-xform-item>
+                    <label class="form-check-label" for="radios2">
+                      Second default radio
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="radios" id="radios3" value="radio 3" disabled data-xform-item>
+                    <label class="form-check-label" for="radios3">
+                      Disabled radio
+                    </label>
+                  </div>
+                </div>
+                <label>Checks and radios</label>
+              </div>
+            </div>
+          </div>
+          <button type="button" class="mt-4 btn btn-primary btn-lg px-4" data-xform-submit>Check and send form</button>
+        </form>
+      </div>
+    </div>
+    <p>Made with ❤️ by <a href="https://derianandre.com/">DerianAndre</a></p>
+  </div>
+
+  <script src="./assets/js/index.js"></script>
+</body>
+</html>
