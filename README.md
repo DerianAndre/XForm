@@ -79,7 +79,7 @@ fetch(this.config.url, {
 })
 ```
 
-#### $fetch()
+#### $fetch() Example
 `$fetch()` will return the `fetch()` response with an aditional `res.json` and `res.error` in the object for easy of use.
 
 ```javascript
