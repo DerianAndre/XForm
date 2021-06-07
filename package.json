@@ -1,7 +1,7 @@
 {
   "name": "xform",
   "version": "1.0.0",
-  "description": "A simple, lightweight and automated way to manage forms with fetch or XHR.",
+  "description": "A simple, lightweight, and automated way to manage forms with fetch or XHR.",
   "main": "src/XForm.js",
   "author": "DerianAndre <hola@derianandre.com>",
   "license": "MIT",

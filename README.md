@@ -1,5 +1,5 @@
 # XForm
-A simple, lightweight and automated way to manage forms with fetch or XHR.
+A simple, lightweight, and automated way to manage forms with fetch or XHR.
 
 ## Setup
 Setting up XForm is really easy. XForm will look for for a `<form></form>` with the `[data-xform]` and `[data-xform-item]` for inputs, checkbox, radio, select, etc. You can change this through the config object.
