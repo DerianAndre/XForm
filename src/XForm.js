@@ -11,7 +11,8 @@
 	// XForm constants
 	const XFORM_FORM_SELECTOR = '[data-xform]';
 	const XFORM_FORM_SUBMIT = '[data-xform-submit]';
-	const XFORM_FORM_ACTION = window.location.href;
+	const XFORM_FORM_RESET = '[data-xform-reset]';
+	const XFORM_FORM_URL = window.location.href;
 	const XFORM_FORM_METHOD = 'post';
 	const XFORM_CLASSES_ENABLE = true;
 	const XFORM_CLASSES_VALID = 'is-valid';
@@ -28,16 +29,20 @@
 	function XForm(selector = XFORM_FORM_SELECTOR, args = {}) {
 		// If first argument is an object then
 		// pass it as the config object and use that
-		// the default selector
+		// the default selector otherwise add it to
+		// the config object
 		if(typeof selector === 'object') {
 			args = selector;
-			selector = XFORM_FORM_SELECTOR;
+		} else {
+			args.selector = selector;
 		}
 		// Default config object
 		const defaults = {
+			selector: XFORM_FORM_SELECTOR,
 			method: XFORM_FORM_METHOD,
-			action: XFORM_FORM_ACTION,
+			url: XFORM_FORM_URL,
 			submit: XFORM_FORM_SUBMIT,
+			reset: XFORM_FORM_RESET,
 			item: {
 				selector: XFORM_ITEM_SELECTOR,
 				default: XFORM_ITEM_DEFAULT,
@@ -52,9 +57,8 @@
 		// Merge args with default to create
 		// the config object
 		const config = merge(defaults, args);
-
+		
 		// Parameters
-		this.selector = selector;
 		this.config = config;
 		this.data = {};
 		this.formData = new FormData();
@@ -64,84 +68,51 @@
 		};
 		this.length = 0;
 		this.ready = false;
-		this.form = false;
-		this.submit = false;
+		this.form = null;
+		this.submit = null;
+		this.reset = null;
 
 		// Functions
 		this.init = init;
 		this.check = check;
-		this.send = send;
+		this.$xhr = $xhr;
+		this.$fetch = $fetch;
 
 		// Return
 		return this;
 	}
 
-	function merge(a, b) {
-		if (Object(b) !== b) return b;
-		if (Object(a) !== a) a = {};
-		for (let key in b) {
-			a[key] = merge(a[key], b[key]);
-		}
-		return a;
-	}
-
-	function values($this, item, type) {
-		if(!$this || !item || !type) return null;
-
-		var value = $this.config.item.default;
-
-		if(type === 'radio') {
-			const array = Array.from($this.form.querySelectorAll(`[name="${item.name}"]`));
-			item = array.find(radio => radio.checked);
-		}
-
-		value = item[XFORM_LOOKUP[type]] || item[XFORM_LOOKUP['default']];
-
-		if(type === 'checkbox') {
-			value = item.checked ? item.value : false;
-		}
-
-		return value;
-	}
-
+	// Init
 	function init() {
-		var form = document.querySelector(this.selector);
-
+		var form = document.querySelector(this.config.selector);
+		// We need a form!
 		if(!form) {
-			throw new Error("[XForm] Form selector not found")
+			throw new Error("[XForm] Form selector missing")
 		}
-
-		var items = Array.from(form.querySelectorAll(this.config.item.selector)),
-				submit = form.querySelector(this.config.submit)
-				data = {},
-				radios = 0;
-
-		//for (let i = 0; i < items.length; i++) {
-		//	const item = items[i];
-		//	
-		//}
-
+		// Variables
+		var items = Array.from(form.querySelectorAll(this.config.item.selector));
+		var submit = form.querySelector(this.config.submit);
+		var reset = form.querySelector(this.config.reset);
+		// Create data object
 		items.forEach(item => {
 			var key = item.getAttribute(this.config.item.key);
 			if(!key) {
-				throw new Error("[XForm] There are items with no key/name");
+				throw new Error("[XForm] Item key missing");
 			}
-			data[key] = this.config.item.default;
-		
+			this.data[key] = this.config.item.default;
 			this.items.object[key] = item;
 		});
-
 		// Update
 		this.form = form;
+		this.submit = submit ? submit : null;
+		this.reset = reset ? reset : null;
 		this.items.array = items;
-		this.submit = submit;
-		this.data = data;
 		this.length = this.items.array.length;
-
 		// Return
 		return this;
 	}
 
+	// Check
 	function check() {
 		var errors = 0;
 		// Reset formData to avoid appending multiple times.
@@ -198,19 +169,77 @@
 		return this;
 	}
 
-	function send(callback) {
+	// Send
+	function $xhr(callback) {
 		// Setup XHR
 		var xhr = new XMLHttpRequest();
-		xhr.open(this.config.method, this.config.action, true);
+		xhr.open(this.config.method, this.config.url, true);
 		// Send data
 		xhr.send(this.formData);
-		// Callback function
+		// Ready state change
 		xhr.onreadystatechange = function() {
-			if (xhr.readyState > 3 && xhr.status == 200) {
-				return callback(xhr.responseText);
+			if (xhr.readyState === 4 && xhr.status === 200) {
+				// Adding a Response as json object
+				try {
+					xhr.json = JSON.parse(xhr.responseText);
+					xhr.error = false;
+				} catch (error) {
+					xhr.json = false;
+					xhr.error = error;
+				}
+				// Do the callback and return it
+				return callback(xhr);
 			}
 		};
 		return;
+	}
+
+	// Javascript Fetch API wrapper with XForm data
+	async function $fetch(args = {}) {
+		// Default arguments nad config
+		const config = merge({
+			method: this.config.method || XFORM_FORM_METHOD,
+			body: this.formData || null
+		}, args);
+		// Javascript Fetch API
+		const res = await fetch(this.config.url, config);
+		try {
+			res.json = await res.json();
+			res.error = false;
+		} catch (error) {
+			res.json = false;
+			res.error = error;
+		}
+		return res;
+	}
+
+	// Utilities
+	// Merge
+	function merge(a, b) {
+		if (Object(b) !== b) return b;
+		if (Object(a) !== a) a = {};
+		for (let key in b) {
+			a[key] = merge(a[key], b[key]);
+		}
+		return a;
+	}
+	// Values
+	function values($this, item, type) {
+		if(!$this || !item || !type) return null;
+		var value = $this.config.item.default;
+		
+		if(type === 'radio') {
+			var array = Array.from($this.form.querySelectorAll(`[name="${item.name}"]`));
+			item = array.find(radio => radio.checked);
+		}
+
+		value = item[XFORM_LOOKUP[type]] || item[XFORM_LOOKUP['default']];
+
+		if(type === 'checkbox') {
+			value = item.checked ? item.value : false;
+		}
+
+		return value;
 	}
 
 	// ✅ Constructor

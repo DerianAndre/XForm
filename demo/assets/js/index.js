@@ -1,32 +1,28 @@
 // Setup form
-var form = new XForm({
-  action: 'http://localhost:3000/demo/assets/php/form.php',
-  items: {
-    key: 'id'
-  }
+var form = new XForm('form', {
+  url: 'http://localhost:3000/demo/assets/php/form.php',
 }).init();
 
-console.log(form)
-console.log('Action:', form.config.action)
+console.log(form);
 
-// On button submit
+// Form button `[data-xform-submit]`
 form.submit.addEventListener('click', () => {
   var check = form.check();
-  var ready = check.ready;
-  console.log(check)
-  console.log('Data:', check.data)
-  console.log('Form Data:', ...check.formData)
-  console.log('Ready:', ready)
-  // Alert for missing inputs that have [required]
-  if(!ready) {
-    setTimeout(() => {
-      alert('Required inputs missing');
-    }, 100);
+  // Alert for missing inputs that have `[required]`
+  if(!check.ready) {
+    // alert('Required inputs missing');
     return;
   }
-  console.log('XForm send');
-  // Do a callback function with send()
-  check.send(res => {
-    console.log('Response:', res);
+  // Fetch
+  check.$fetch().then(res => {
+    console.log('Fetch Response:', res.json);
+    console.log('Fetch Error:', res.error);
+  }).catch(error => {
+    console.log('Error:', error);
+  })
+  // XHR
+  check.$xhr(res => {
+    console.log('XHR Response:', res.json);
+    console.log('XHR Error:', res.error);
   });
 }, false);

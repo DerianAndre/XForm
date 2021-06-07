@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="DerianAndre">
+    <title>XForm</title>
+    <!-- XForm -->
+    <script src="../dist/xform.js"></script>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+    <style>body { background: rgb(234, 238, 243); }</style>
+  </head>
+<body>
+  <div class="container py-5 d-flex align-items-center flex-column">
+    <div class="card text-center border-0 shadow mb-5" style="border-radius: 0.75rem;">
+      <div class="card-body p-5">
+        <h1 class="card-title">XForm</h1>
+        <p class="lead mb-4">A simple, lightweight and automated way to manage forms with XHR.</p>
+        <form data-xform>
+          <div class="row row-cols-1 row-cols-md-2 gx-3 text-start">
+            <div class="col">
+              <!-- Text -->
+              <div class="form-floating mb-3">
+                <input id="name" name="text" placeholder="Text" class="form-control" type="text" required>
+                <label for="text">Text</label>
+              </div>
+              <!-- E-mail -->
+              <div class="form-floating mb-3">
+                <input id="email" name="email" placeholder="E-mail" class="form-control" type="text" required>
+                <label for="email">E-mail</label>
+              </div>
+              <!-- Password -->
+              <div class="form-floating mb-3">
+                <input id="password" name="password" placeholder="Password" class="form-control" type="password" required>
+                <label for="password">Password</label>
+              </div>
+              <!-- Date -->
+              <div class="form-floating mb-3">
+                <input id="date" name="date" placeholder="Date" class="form-control" type="date">
+                <label for="date">Date</label>
+              </div>
+              <!-- Textarea -->
+              <div class="form-floating mb-3">
+                <textarea id="message" name="message" placeholder="Message" class="form-control space-form" rows="3"></textarea>
+                <label for="message">Message</label>
+              </div>
+              <!-- Range -->
+              <div class="form-floating mb-3">
+                <div class="form-control">
+                  <input id="range"  name="range" type="range" class="form-range" min="0" max="5">
+                </div>
+                <label for="range">Range</label>
+              </div>
+              <!-- Files -->
+              <div class="form-floating mb-3">
+                <div class="form-control h-auto">
+                  <input id="files" name="files" class="form-control" type="file" multiple>
+                </div>
+                <label for="files">Files</label>
+              </div>
+            </div>
+          </div>
+          <button type="button" class="mt-4 btn btn-primary btn-lg px-4" data-xform-submit>Check and send form</button>
+        </form>
+      </div>
+    </div>
+    <p>Made with ❤️ by <a href="https://derianandre.com/">DerianAndre</a></p>
+  </div>
+
+  <script>
+    // Setup form
+    var form = new XForm('form', {
+      url: 'http://localhost:3000/demo/assets/php/form.php',
+      item: {
+        selector: 'input, textarea'
+      }
+    }).init();
+
+
+    // On button submit
+    form.submit.addEventListener('click', () => {
+      var check = form.check();
+      console.log(check);
+      check.$fetch().then(res => {
+        console.log('Fetch Response:', res.json);
+      }).catch(error => {
+        console.log('Error:', error);
+      })
+    }, false);
+  </script>
+</body>
+</html>
