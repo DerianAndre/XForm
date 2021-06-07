@@ -6,6 +6,66 @@ Setting up XForm is really easy. XForm will look for for a `<form></form>` with 
 
 You can pass the form selector as the first argument and the config object as the second, or you can just the selector or even just the config object for that matter. It will detect if the first argument is a string or an object.
 
+### Example
+Do it the way you want, just add `[data-xform]` and `[data-xform-item]` or change it to your needs.
+
+#### HTML
+```html
+<form data-xform>
+  <input id="text" name="text" placeholder="Text" type="text" data-xform-item>
+</form>
+```
+
+#### JS 
+```javascript
+// Setup form
+var form = new XForm({
+  url: "http://example.com/form.php",
+  method: "post" // Default
+}).init();
+// Event listener
+form.submit.addEventListener('click', () => {
+  var check = form.check();
+  check.$fetch().then(res => {
+    console.log('Fetch Response:', res.json);
+    console.log('Fetch Error:', res.error);
+  }).catch(error => {
+    console.log('Error:', error);
+  })
+}, false);
+```
+
+#### PHP
+
+A simple small code to see if we got the data and send it back with an status message or code.
+```php
+// Default status is error
+$status = !empty($_POST) ? "success" : "error";
+// Response
+$res->post = $_POST;
+$res->files = $_FILES;
+$res->status = $status;
+// Echo
+echo json_encode($res);
+```
+
+##### PHP Response
+In this case a very usefull response looks like this:
+```javascript
+{
+  post: {...},
+  files: {files: {...}},
+  status: "success"
+}
+```
+
+
+
+
+
+
+## Functions
+
 ### $fetch()
 `$fetch()` is a simple wrapper arround the javascript fetch api.
 You can only pass the config object to fetch as the url is taken from `XForm.config.url` so there is no need
@@ -18,7 +78,8 @@ fetch(this.config.url, {
   body: this.formData
 })
 ```
-#### $fetch() Example
+
+#### $fetch()
 `$fetch()` will return the `fetch()` response with an aditional `res.json` and `res.error` in the object for easy of use.
 
 ```javascript
@@ -50,37 +111,4 @@ form.submit.addEventListener('click', () => {
     console.log('XHR Response:', res.json);
   });
 }, false);
-```
-
-### Example
-Do it the way you want, just add `[data-xform]` and `[data-xform-item]` or change it to your needs.
-
-#### HTML Example Setup
-```html
-<form data-xform>
-  <input id="text" name="text" placeholder="Text" type="text" data-xform-item>
-</form>
-```
-
-#### PHP Example Setup
-A simple small code to see if we got the data and send it back with an status message or code.
-```php
-// Default status is error
-$status = !empty($_POST) ? "success" : "error";
-// Response
-$res->post = $_POST;
-$res->files = $_FILES;
-$res->status = $status;
-// Echo
-echo json_encode($res);
-```
-
-##### PHP Example Response
-In this case a very usefull response looks like this:
-```javascript
-{
-  post: {...},
-  files: {files: {...}},
-  status: "success"
-}
 ```
