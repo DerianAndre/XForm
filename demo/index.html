@@ -22,40 +22,41 @@
             <div class="col">
               <!-- Text -->
               <div class="form-floating mb-3">
-                <input id="text" name="text" placeholder="Text" class="form-control" type="text" required data-xform-item>
+                <input id="text" name="text" placeholder="Text" class="form-control" type="text" data-xform-ignore>
                 <label for="text">Text</label>
+                <div class="form-text">Ignored with [data-xform-ignore]</div>
               </div>
               <!-- E-mail -->
               <div class="form-floating mb-3">
-                <input id="email" name="email" placeholder="E-mail" class="form-control" type="text" required data-xform-item>
+                <input id="email" name="email" placeholder="E-mail" class="form-control" type="text" required>
                 <label for="email">E-mail</label>
               </div>
               <!-- Password -->
               <div class="form-floating mb-3">
-                <input id="password" name="password" placeholder="Password" class="form-control" type="password" required data-xform-item>
+                <input id="password" name="password" placeholder="Password" class="form-control" type="password" required>
                 <label for="password">Password</label>
               </div>
               <!-- Date -->
               <div class="form-floating mb-3">
-                <input id="date" name="date" placeholder="Date" class="form-control" type="date" data-xform-item>
+                <input id="date" name="date" placeholder="Date" class="form-control" type="date">
                 <label for="date">Date</label>
               </div>
               <!-- Textarea -->
               <div class="form-floating mb-3">
-                <textarea id="message" name="message" placeholder="Message" class="form-control space-form" rows="3" data-xform-item></textarea>
+                <textarea id="message" name="message" placeholder="Message" class="form-control space-form" rows="3"></textarea>
                 <label for="message">Message</label>
               </div>
               <!-- Range -->
               <div class="form-floating mb-3">
                 <div class="form-control">
-                  <input id="range"  name="range" type="range" class="form-range" min="0" max="5"data-xform-item>
+                  <input id="range"  name="range" type="range" class="form-range" min="0" max="5">
                 </div>
                 <label for="range">Range</label>
               </div>
               <!-- Files -->
               <div class="form-floating mb-3">
                 <div class="form-control h-auto">
-                  <input id="files" name="files" class="form-control" type="file" multiple data-xform-item>
+                  <input id="files" name="files" class="form-control" type="file" multiple>
                 </div>
                 <label for="files">Files</label>
               </div>
@@ -63,7 +64,7 @@
             <div class="col">
               <!-- Select -->
               <div class="form-floating mb-3">
-                <select id="select" name="select" class="form-select" aria-label="Floating label select example" data-xform-item>
+                <select id="select" name="select" class="form-select" aria-label="Floating label select example">
                   <option value="1">One</option>
                   <option value="2">Two</option>
                   <option value="3">Three</option>
@@ -72,7 +73,7 @@
               </div>
               <!-- Datalist -->
               <div class="form-floating mb-3">
-                <input name="datalist" class="form-control" list="datalistOptions" id="datalist" placeholder="Type to search..." data-xform-item>
+                <input id="datalist" name="datalist" class="form-control" list="datalistOptions" placeholder="Type to search...">
                 <label for="datalist" class="form-label">Datalist</label>
                 <datalist id="datalistOptions">
                   <option value="San Francisco">
@@ -84,8 +85,8 @@
               </div>
               <!-- Color -->
               <div class="form-floating mb-3">
-                <input name="color" type="color" class="form-control form-control-color mw-100" id="exampleColorInput" value="#563d7c" title="Choose your color" data-xform-item>
-                <label for="exampleColorInput" class="form-label">Color picker</label>
+                <input id="color" name="color" type="color" class="form-control form-control-color mw-100" value="#563d7c" title="Choose your color">
+                <label for="color" class="form-label">Color picker</label>
               </div>
               <!-- Checks and Radios -->
               <div class="form-floating">
@@ -93,7 +94,7 @@
                   <!-- Checkbox -->
                   <b>Checkbox</b>
                   <div class="form-check mb-2">
-                    <input class="form-check-input" id="checkbox" name="checkbox" type="checkbox" value="true" checked data-xform-item>
+                    <input class="form-check-input" id="checkbox" name="checkbox" type="checkbox" value="true" checked>
                     <label class="form-check-label" for="checkbox">
                       Checked checkbox
                     </label>
@@ -101,25 +102,25 @@
                   <!-- Switch -->
                   <b>Switch</b>
                   <div class="form-check mb-2 form-switch">
-                    <input class="form-check-input" id="switch" name="switch" type="checkbox" value="true-switch" data-xform-item>
+                    <input class="form-check-input" id="switch" name="switch" type="checkbox" value="true-switch">
                     <label class="form-check-label" for="switch">Default switch checkbox input</label>
                   </div>
                   <!-- Radio -->
                   <b>Radio</b>
                   <div class="form-check">
-                    <input class="form-check-input" type="radio" name="radios" id="radios1" value="radio 1" checked data-xform-item>
+                    <input class="form-check-input" type="radio" name="radios" id="radios1" value="radio 1" checked>
                     <label class="form-check-label" for="radios1">
                       Default radio
                     </label>
                   </div>
                   <div class="form-check">
-                    <input class="form-check-input" type="radio" name="radios" id="radios2" value="radio 2" data-xform-item>
+                    <input class="form-check-input" type="radio" name="radios" id="radios2" value="radio 2">
                     <label class="form-check-label" for="radios2">
                       Second default radio
                     </label>
                   </div>
                   <div class="form-check">
-                    <input class="form-check-input" type="radio" name="radios" id="radios3" value="radio 3" disabled data-xform-item>
+                    <input class="form-check-input" type="radio" name="radios" id="radios3" value="radio 3" disabled>
                     <label class="form-check-label" for="radios3">
                       Disabled radio
                     </label>
@@ -129,8 +130,8 @@
               </div>
             </div>
           </div>
-          <button type="button" class="mt-4 btn btn-primary btn-lg px-4" data-xform-submit>Check and send form</button>
-          <button type="button" class="mt-4 btn btn-danger btn-lg px-4" data-xform-reset>Reset form</button>
+          <button type="button" class="mt-4 px-4 btn btn-lg btn-primary" data-xform-submit>Check and send form</button>
+          <button type="button" class="mt-4 px-4 btn btn-lg btn-danger" data-xform-reset>Reset form</button>
         </form>
       </div>
     </div>

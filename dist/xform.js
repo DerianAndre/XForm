@@ -4,7 +4,7 @@
  * @version    : 1.0.0
  * @author     : DerianAndre <hola@derianandre.com>
  * @repository : https://github.com/DerianAndre/XForm.git
- * @built      : 7/6/2021
+ * @built      : 9/6/2021
  * @license    : MIT
  */
 // Universal Module Definition
@@ -23,12 +23,16 @@
 	const XFORM_FORM_RESET = '[data-xform-reset]';
 	const XFORM_FORM_URL = window.location.href;
 	const XFORM_FORM_METHOD = 'post';
+	const XFORM_FORM_JSON = true;
 	const XFORM_CLASSES_ENABLE = true;
 	const XFORM_CLASSES_VALID = 'is-valid';
 	const XFORM_CLASSES_INVALID = 'is-invalid';
+	const XFORM_ITEM_SELECTALL = true;
 	const XFORM_ITEM_DEFAULT = null;
 	const XFORM_ITEM_KEY = 'name';
 	const XFORM_ITEM_SELECTOR =  '[data-xform-item]';
+	const XFORM_ITEM_IGNORE =  '[data-xform-ignore]';
+	const XFORM_ITEM_TAGS =  'input, select, textarea';
 	const XFORM_LOOKUP = {
 		'file': 'files',
 		'checkbox': 'checked',
@@ -52,10 +56,13 @@
 			url: XFORM_FORM_URL,
 			submit: XFORM_FORM_SUBMIT,
 			reset: XFORM_FORM_RESET,
+			json: XFORM_FORM_JSON,
 			item: {
+				selectAll: XFORM_ITEM_SELECTALL,
 				selector: XFORM_ITEM_SELECTOR,
-				default: XFORM_ITEM_DEFAULT,
+				ignore: XFORM_ITEM_IGNORE,
 				key: XFORM_ITEM_KEY,
+				default: XFORM_ITEM_DEFAULT,
 			},
 			classes: {
 				enable: XFORM_CLASSES_ENABLE,
@@ -70,6 +77,7 @@
 		// Parameters
 		this.config = config;
 		this.data = {};
+		this.dataJSON = {};
 		this.formData = new FormData();
 		this.items = {
 			array: [],
@@ -99,23 +107,38 @@
 			throw new Error("[XForm] Form selector missing")
 		}
 		// Variables
-		var items = Array.from(form.querySelectorAll(this.config.item.selector));
+		var itemSelector = this.config.item.selectAll ? XFORM_ITEM_TAGS : this.config.item.selector;
+		var items = Array.from(form.querySelectorAll(itemSelector));
 		var submit = form.querySelector(this.config.submit);
 		var reset = form.querySelector(this.config.reset);
 		// Create data object
 		items.forEach(item => {
+			// If item has attribute or class from config.item.ignore
+			// we skip it
+			// It's done like this because you can pass a "list"
+			// in the item selector config so we can't use :not()
+			// with querySelectorAll as easily as this
+			if(item.hasAttribute(this.config.item.ignore.slice(1,-1)) || item.classList.contains(this.config.item.ignore)) {
+				return;
+			}
+			// Get key
 			var key = item.getAttribute(this.config.item.key);
+			// No key no item
 			if(!key) {
 				throw new Error("[XForm] Item key missing");
 			}
+			// Check if there are items with the same key
+			var itemArray = Array.from(form.querySelectorAll(`[${this.config.item.key}="${key}"]`));
+			// Set default value for item
 			this.data[key] = this.config.item.default;
-			this.items.object[key] = item;
+			// Push to Array
+			this.items.array.push(item);
+			this.items.object[key] = (itemArray.length === 1) ? item : itemArray;
 		});
 		// Update
 		this.form = form;
 		this.submit = submit ? submit : null;
 		this.reset = reset ? reset : null;
-		this.items.array = items;
 		this.length = this.items.array.length;
 		// Return
 		return this;
@@ -128,13 +151,15 @@
 		this.formData = new FormData();
 		// Loop through items
 		this.items.array.forEach(item => {
-			// Set key and type
+			// Get key
 			var key = item.getAttribute(this.config.item.key);
-			var type = item.getAttribute('type') || 'default';
 			// Throw error if no key
 			if(!key) {
 				throw new Error("[XForm] Item does not have a key");
 			}
+			// Get type and value
+			var type = item.getAttribute('type') || 'default';
+			var value = values(this, item, type);
 			// Validation
 			if(!item.value || item.value == "") {
 				if(item.hasAttribute('required')) {
@@ -152,26 +177,29 @@
 					item.classList.add(this.config.classes.valid);
 					item.classList.remove(this.config.classes.invalid);
 				}
-				// Add values to XForm Data
-				var value = values(this, item, type);
-				this.data[key] = value;
-				// Add values to XForm FormData
-				// If input is a file type then the
-				// value is "files" not "value"
-				if(type == 'file') {
-					if(item.files.length > 0) {
-						var fileList = Array.from(value);
-						fileList.forEach(file => {
-							this.formData.append(`${key}[]`, file);
-						})
-					} else {
-						this.formData.append(key, null);
-					}
+			}
+			// Add values to XForm Data
+			this.data[key] = value;
+			// Add values to XForm FormData
+			// If input is a file type then the
+			// value is "files" not "value"
+			if(type == 'file') {
+				if(item.files.length > 0) {
+					var fileList = Array.from(value);
+					fileList.forEach(file => {
+						this.formData.append(`${key}[]`, file);
+					})
 				} else {
-					this.formData.append(key, value);
+					this.formData.append(key, null);
 				}
+			} else {
+				this.formData.append(key, value);
 			}
 		});
+		// Appneding it as an encoded JSON
+		var dataJSON = JSON.stringify(this.data);
+		this.dataJSON = dataJSON;
+		this.formData.append('dataJSON', dataJSON);
 		// If no errors we are ready to submit.
 		if(errors === 0) this.ready = true;
 		// Return
@@ -224,6 +252,8 @@
 
 	// Utilities
 	// Merge
+	// This function merges like Object.assign() but works
+	// for nested objects
 	function merge(a, b) {
 		if (Object(b) !== b) return b;
 		if (Object(a) !== a) a = {};
@@ -235,19 +265,22 @@
 	// Values
 	function values($this, item, type) {
 		if(!$this || !item || !type) return null;
-		var value = $this.config.item.default;
-		
+		// Radio can be multiple items with the same name
+		// so we have to select all of them and find the
+		// checked one and get its value from it
 		if(type === 'radio') {
 			var array = Array.from($this.form.querySelectorAll(`[name="${item.name}"]`));
 			item = array.find(radio => radio.checked);
 		}
-
-		value = item[XFORM_LOOKUP[type]] || item[XFORM_LOOKUP['default']];
-
+		// Get value from item or set it to item defualt value
+		var value = item[XFORM_LOOKUP[type]] || item[XFORM_LOOKUP['default']];
+		value = value ? value : $this.config.item.default;
+		// For checkbox is it's check it's the checkbox value
+		// otherwise it's false
 		if(type === 'checkbox') {
 			value = item.checked ? item.value : false;
 		}
-
+		// Return value
 		return value;
 	}
 
