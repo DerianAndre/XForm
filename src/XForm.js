@@ -1,4 +1,4 @@
-// Universal Module Definition
+//UMD - Universal Module Definition
 (function (root, factory) {
 	if (typeof define === 'function' && define.amd) {
 		define([], factory);
@@ -8,28 +8,33 @@
 		root.XForm = factory();
 	}
 } (this, function () {
-	// XForm constants
+	// Constants
+	// Constants: Config - Form
 	const XFORM_FORM_SELECTOR = '[data-xform]';
 	const XFORM_FORM_SUBMIT = '[data-xform-submit]';
 	const XFORM_FORM_RESET = '[data-xform-reset]';
 	const XFORM_FORM_URL = window.location.href;
 	const XFORM_FORM_METHOD = 'post';
 	const XFORM_FORM_JSON = true;
+	const XFORM_FORM_JSON_ONLY = true;
+	// Constants: Config - Classes
 	const XFORM_CLASSES_ENABLE = true;
 	const XFORM_CLASSES_VALID = 'is-valid';
 	const XFORM_CLASSES_INVALID = 'is-invalid';
+	// Constants: Config - Item
 	const XFORM_ITEM_SELECTALL = true;
 	const XFORM_ITEM_DEFAULT = null;
 	const XFORM_ITEM_KEY = 'name';
-	const XFORM_ITEM_SELECTOR =  '[data-xform-item]';
-	const XFORM_ITEM_IGNORE =  '[data-xform-ignore]';
-	const XFORM_ITEM_TAGS =  'input, select, textarea';
+	const XFORM_ITEM_SELECTOR = '[data-xform-item]';
+	const XFORM_ITEM_IGNORE = '[data-xform-ignore]';
+	const XFORM_ITEM_SELECT_ALL = 'input, select, textarea';
+	// Constants: Functions
 	const XFORM_LOOKUP = {
 		'file': 'files',
 		'checkbox': 'checked',
 		'default': 'value'
 	};
-
+	// Constructor
 	function XForm(selector = XFORM_FORM_SELECTOR, args = {}) {
 		// If first argument is an object then
 		// pass it as the config object and use that
@@ -48,6 +53,7 @@
 			submit: XFORM_FORM_SUBMIT,
 			reset: XFORM_FORM_RESET,
 			json: XFORM_FORM_JSON,
+			jsonOnly: XFORM_FORM_JSON_ONLY,
 			item: {
 				selectAll: XFORM_ITEM_SELECTALL,
 				selector: XFORM_ITEM_SELECTOR,
@@ -64,28 +70,28 @@
 		// Merge args with default to create
 		// the config object
 		const config = merge(defaults, args);
-		
 		// Parameters
 		this.config = config;
+		// Form selectors
+		this.form = null;
+		this.ready = false;
+		this.submit = null;
+		this.reset = null;
+		// Data
 		this.data = {};
 		this.dataJSON = {};
 		this.formData = new FormData();
+		// Items
 		this.items = {
 			array: [],
 			object: {}
 		};
 		this.length = 0;
-		this.ready = false;
-		this.form = null;
-		this.submit = null;
-		this.reset = null;
-
 		// Functions
 		this.init = init;
 		this.check = check;
 		this.$xhr = $xhr;
 		this.$fetch = $fetch;
-
 		// Return
 		return this;
 	}
@@ -98,7 +104,7 @@
 			throw new Error("[XForm] Form selector missing")
 		}
 		// Variables
-		var itemSelector = this.config.item.selectAll ? XFORM_ITEM_TAGS : this.config.item.selector;
+		var itemSelector = this.config.item.selectAll ? XFORM_ITEM_SELECT_ALL : this.config.item.selector;
 		var items = Array.from(form.querySelectorAll(itemSelector));
 		var submit = form.querySelector(this.config.submit);
 		var reset = form.querySelector(this.config.reset);
@@ -181,10 +187,10 @@
 						this.formData.append(`${key}[]`, file);
 					})
 				} else {
-					this.formData.append(key, null);
+					if(!this.config.jsonOnly) this.formData.append(key, null);
 				}
 			} else {
-				this.formData.append(key, value);
+				if(!this.config.jsonOnly) this.formData.append(key, value);
 			}
 		});
 		// Appneding it as an encoded JSON
@@ -241,7 +247,7 @@
 		return res;
 	}
 
-	// Utilities
+	//#region 🧰 Utilities
 	// Merge
 	// This function merges like Object.assign() but works
 	// for nested objects
@@ -274,6 +280,7 @@
 		// Return value
 		return value;
 	}
+	//#endregion
 
 	// ✅ Constructor
 	function constructor(selector, args) {

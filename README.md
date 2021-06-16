@@ -1,18 +1,17 @@
 # XForm
-A simple, lightweight, and automated way to manage forms with fetch or XHR.
+A simple, lightweight, and automated way to manage forms with vanilla javascript, fetch and/or XHR.
 
 ## Setup
-Setting up XForm is really easy. XForm will look for for a `<form></form>` with the `[data-xform]` and `[data-xform-item]` for inputs, checkbox, radio, select, etc. You can change this through the config object.
+Setting up XForm is really easy. XForm will look for `<form data-xform></form>` and will get all inputs, checkbox, radio, select, etc. You can either change it to select items with `data-xform-item` or you can ignore items with `data-xform-ignore`. You can also change selectors for form, item and ignore through the config object.
 
 You can pass the form selector as the first argument and the config object as the second, or you can just the selector or even just the config object for that matter. It will detect if the first argument is a string or an object.
 
 ### Example
-Do it the way you want, just add `[data-xform]` and `[data-xform-item]` or change it to your needs.
-
+A simple example can be done with a very few and simple clean code.
 #### HTML
 ```html
 <form data-xform>
-  <input id="text" name="text" placeholder="Text" type="text" data-xform-item>
+  <input id="text" name="text" placeholder="Sample text..." type="text">
 </form>
 ```
 
@@ -23,15 +22,21 @@ var form = new XForm({
   url: "http://example.com/form.php",
   method: "post" // Default
 }).init();
+
 // Event listener
 form.submit.addEventListener('click', () => {
+  // Check items from form and making data objects
   var check = form.check();
-  check.$fetch().then(res => {
-    console.log('Fetch Response:', res.json);
-    console.log('Fetch Error:', res.error);
-  }).catch(error => {
-    console.log('Error:', error);
-  })
+  // Send it with fetch
+  check.$fetch()
+    // Getting response
+    .then(res => {
+      console.log('Fetch Response:', res.json);
+    })
+    // If we have an error, catch it
+    .catch(error => {
+      console.log('Error:', error);
+    })
 }, false);
 ```
 
@@ -59,17 +64,10 @@ In this case a very usefull response looks like this:
 }
 ```
 
-
-
-
-
-
 ## Functions
 
 ### $fetch()
-`$fetch()` is a simple wrapper arround the javascript fetch api.
-You can only pass the config object to fetch as the url is taken from `XForm.config.url` so there is no need
-to pass it again.
+`$fetch()` is a simple wrapper arround the javascript fetch api. You can only pass the config object to fetch as the url is taken from `XForm.config.url` so there is no need to pass it again.
 
 This is how the fetch api is implemented in the source code:
 ```javascript
