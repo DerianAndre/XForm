@@ -3,8 +3,12 @@
   "version": "1.0.0",
   "description": "A simple, lightweight, and automated way to manage forms with vanilla javascript, fetch and/or XHR.",
   "main": "src/XForm.js",
-  "author": "DerianAndre <hola@derianandre.com>",
   "license": "MIT",
+	"author": {
+		"name": "Derian Castillo",
+		"email": "hola@derianandre.com",
+		"url": "https://derianandre.com"
+	},
   "repository": {
     "type": "git",
     "url": "https://github.com/DerianAndre/XForm.git"
